@@ -32,9 +32,9 @@ npx blnt-cli "your query"
 Ask a question directly from the command line:
 
 ```bash
-blnt "What is Node.js?"
-blnt "Explain quantum computing in simple terms"
-blnt --model llama2 "Write a haiku about coding"
+blnt query "What is Node.js?"
+blnt query "Explain quantum computing in simple terms"
+blnt query --model llama2 "Write a haiku about coding"
 ```
 
 ### 2. Interactive Chat Mode
@@ -128,11 +128,11 @@ blnt "your query"
 
 ### Main Commands
 
-#### `blnt [QUERY]`
+#### `blnt query <QUERY>`
 Execute a direct query to the AI.
 
 **Arguments:**
-- `QUERY` - Your question or prompt (optional)
+- `QUERY` - Your question or prompt (required)
 
 **Flags:**
 - `-m, --model <model>` - Specify which model to use
@@ -140,8 +140,8 @@ Execute a direct query to the AI.
 
 **Examples:**
 ```bash
-blnt "What is the capital of France?"
-blnt --model llama2 "Explain recursion"
+blnt query "What is the capital of France?"
+blnt query --model llama2 "Explain recursion"
 ```
 
 #### `blnt chat`
@@ -274,12 +274,12 @@ If a model isn't available:
 
 ### Code Explanation
 ```bash
-blnt "Explain this code: $(cat script.js)"
+blnt query "Explain this code: $(cat script.js)"
 ```
 
 ### Documentation Generation
 ```bash
-blnt "Generate documentation for this function: $(cat utils.js)"
+blnt query "Generate documentation for this function: $(cat utils.js)"
 ```
 
 ### Project Analysis

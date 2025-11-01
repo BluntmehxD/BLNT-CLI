@@ -9,3 +9,5 @@ tmp/
 *.tsbuildinfo
 coverage/
 .nyc_output/
+build/
+sea-prep.blob

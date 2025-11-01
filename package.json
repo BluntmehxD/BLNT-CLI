@@ -14,12 +14,13 @@
   ],
   "scripts": {
     "build": "tsc -b",
-    "clean": "rm -rf dist oclif.manifest.json",
+    "clean": "rm -rf dist oclif.manifest.json build sea-prep.blob",
     "lint": "eslint . --ext .ts",
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "npm run build && oclif manifest && oclif readme",
     "test": "echo \"No tests yet\" && exit 0",
-    "dev": "node --loader ts-node/esm ./bin/dev.js"
+    "dev": "node --loader ts-node/esm ./bin/dev.js",
+    "package": "./scripts/build-executables.sh"
   },
   "keywords": [
     "ai",
@@ -59,7 +60,6 @@
     "bin": "blnt",
     "dirname": "blnt",
     "commands": "./dist/commands",
-    "default": ".",
     "plugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-plugins"
@@ -70,6 +70,20 @@
         "description": "Manage BLNT-CLI configuration"
       }
     }
+  },
+  "pkg": {
+    "scripts": "dist/**/*.js",
+    "targets": [
+      "node18-linux-x64",
+      "node18-macos-x64",
+      "node18-win-x64"
+    ],
+    "outputPath": "build",
+    "assets": [
+      "node_modules/@oclif/**/*",
+      "node_modules/ink/**/*",
+      "node_modules/react/**/*"
+    ]
   },
   "engines": {
     "node": ">=18.0.0"

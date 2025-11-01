@@ -2,16 +2,16 @@ import { Args, Command, Flags } from '@oclif/core';
 import { AIProvider } from '../utils/ai-provider.js';
 import { printLogo, theme, formatError, formatSuccess } from '../utils/theme.js';
 
-export default class Index extends Command {
+export default class Query extends Command {
   static args = {
-    query: Args.string({ description: 'Direct query to the AI', required: false }),
+    query: Args.string({ description: 'Direct query to the AI', required: true }),
   };
 
-  static description = 'Query the AI directly';
+  static description = 'Query the AI directly (default command)';
 
   static examples = [
-    '<%= config.bin %> "What is the capital of France?"',
-    '<%= config.bin %> --model llama2 "Explain quantum computing"',
+    '<%= config.bin %> query "What is the capital of France?"',
+    '<%= config.bin %> query --model llama2 "Explain quantum computing"',
   ];
 
   static flags = {
@@ -20,18 +20,7 @@ export default class Index extends Command {
   };
 
   async run(): Promise<void> {
-    const { args, flags } = await this.parse(Index);
-
-    if (!args.query) {
-      printLogo();
-      this.log(theme.text('Usage: blnt <query> or blnt chat for interactive mode'));
-      this.log(theme.dim('\nExamples:'));
-      this.log(theme.accent('  blnt "What is Node.js?"'));
-      this.log(theme.accent('  blnt chat'));
-      this.log(theme.accent('  blnt context'));
-      this.log(theme.dim('\nType "blnt --help" for more information'));
-      return;
-    }
+    const { args, flags } = await this.parse(Query);
 
     printLogo();
     

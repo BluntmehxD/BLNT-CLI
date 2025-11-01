@@ -45,8 +45,8 @@ npx blnt-cli "What is Node.js?"
 
 ### Direct Query
 ```bash
-blnt "What is the capital of France?"
-blnt "Explain quantum computing"
+blnt query "What is the capital of France?"
+blnt query "Explain quantum computing"
 ```
 
 ### Interactive Chat
@@ -84,7 +84,7 @@ For complete documentation, see [docs/USAGE.md](docs/USAGE.md)
 
 | Command | Description |
 |---------|-------------|
-| `blnt [query]` | Direct query to AI |
+| `blnt query <query>` | Direct query to AI |
 | `blnt chat` | Interactive chat mode |
 | `blnt context <query>` | Query with BLNT.md context |
 | `blnt config set <key> <value>` | Set configuration |
