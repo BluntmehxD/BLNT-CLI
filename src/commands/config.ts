@@ -69,7 +69,14 @@ export async function configCommand(options: any) {
 }
 
 function getNestedValue(obj: any, path: string): any {
-  return path.split('.').reduce((current, key) => current?.[key], obj);
+  const keys = path.split('.');
+  
+  // Prevent prototype pollution attempts
+  if (keys.some(key => key === '__proto__' || key === 'constructor' || key === 'prototype')) {
+    return undefined;
+  }
+  
+  return keys.reduce((current, key) => current?.[key], obj);
 }
 
 function setNestedValue(obj: any, path: string, value: any): void {
