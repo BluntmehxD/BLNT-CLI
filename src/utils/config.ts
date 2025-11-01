@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import { logger } from './logger';
 
 export interface Config {
   apiKey?: string;
@@ -26,7 +27,7 @@ export class ConfigManager {
         this.config = JSON.parse(data);
       }
     } catch (error) {
-      console.error('Error loading config:', error);
+      logger.error('Error loading config:', error);
     }
   }
 
@@ -37,7 +38,7 @@ export class ConfigManager {
       }
       fs.writeFileSync(CONFIG_FILE, JSON.stringify(this.config, null, 2));
     } catch (error) {
-      console.error('Error saving config:', error);
+      logger.error('Error saving config:', error);
     }
   }
 
