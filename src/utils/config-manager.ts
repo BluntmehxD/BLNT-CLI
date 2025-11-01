@@ -61,7 +61,7 @@ export class ConfigManager {
       const data = await fs.readFile(this.configPath, 'utf-8');
       this.config = { ...this.getDefaultConfig(), ...JSON.parse(data) };
       return this.config;
-    } catch (error) {
+    } catch (_error) {
       // Config file doesn't exist, use defaults
       return this.config;
     }

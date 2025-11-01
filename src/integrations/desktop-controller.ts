@@ -1,4 +1,4 @@
-import { exec, spawn } from 'child_process';
+import { exec } from 'child_process';
 import { promisify } from 'util';
 import chalk from 'chalk';
 import ora from 'ora';
@@ -61,7 +61,7 @@ export class DesktopController {
         const output = await this.executeCommand('systeminfo');
         info.details = output;
       }
-    } catch (error) {
+    } catch (_error) {
       info.error = 'Failed to get detailed system info';
     }
 

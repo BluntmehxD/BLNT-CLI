@@ -2,7 +2,6 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { DesktopController } from '../integrations/desktop-controller';
-import { ConfigManager } from '../utils/config-manager';
 
 export function DesktopCommand(program: Command): void {
   const desktopCmd = program
