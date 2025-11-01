@@ -1,0 +1,147 @@
+name: Monitoring & Alerts
+
+on:
+  schedule:
+    # Run monitoring checks every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Deployment"]
+    types:
+      - completed
+
+jobs:
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check NPM package availability
+        run: |
+          PACKAGE_NAME="blnt-cli"
+          
+          # Check if package exists on npm
+          if npm view $PACKAGE_NAME version > /dev/null 2>&1; then
+            LATEST_VERSION=$(npm view $PACKAGE_NAME version)
+            echo "✅ Package $PACKAGE_NAME is available on npm"
+            echo "Latest version: $LATEST_VERSION"
+          else
+            echo "⚠️ Package $PACKAGE_NAME not found on npm"
+          fi
+      
+      - name: Check download stats
+        run: |
+          PACKAGE_NAME="blnt-cli"
+          
+          # Get download stats if package exists
+          if npm view $PACKAGE_NAME version > /dev/null 2>&1; then
+            echo "Fetching download statistics..."
+            curl -s "https://api.npmjs.org/downloads/point/last-week/$PACKAGE_NAME" || echo "Stats not available yet"
+          fi
+
+  performance-metrics:
+    name: Performance Metrics
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build project
+        run: npm run build
+      
+      - name: Measure startup time
+        run: |
+          echo "Measuring CLI startup time..."
+          if [ -f "dist/cli.js" ] || [ -f "bin/cli.js" ]; then
+            time node dist/cli.js --version 2>&1 || true
+          else
+            echo "CLI not built yet"
+          fi
+      
+      - name: Run performance benchmarks
+        run: |
+          if grep -q "test:performance" package.json; then
+            npm run test:performance
+          else
+            echo "No performance tests configured yet"
+          fi
+
+  error-tracking:
+    name: Error Rate Monitoring
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    if: github.event_name == 'workflow_run'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check workflow status
+        run: |
+          if [ "${{ github.event.workflow_run.conclusion }}" = "failure" ]; then
+            echo "⚠️ Previous workflow failed"
+            echo "Workflow: ${{ github.event.workflow_run.name }}"
+            echo "Conclusion: ${{ github.event.workflow_run.conclusion }}"
+          else
+            echo "✅ Previous workflow succeeded"
+          fi
+
+  alert-on-failures:
+    name: Alert on Failures
+    runs-on: ubuntu-latest
+    permissions: {}
+    if: failure()
+    
+    steps:
+      - name: Send alert
+        run: |
+          echo "🚨 ALERT: Monitoring checks failed!"
+          echo "Workflow: ${{ github.workflow }}"
+          echo "Job: ${{ github.job }}"
+          echo "Run: ${{ github.run_id }}"
+          
+          # In production, integrate with Slack, PagerDuty, etc.
+          # curl -X POST -H 'Content-type: application/json' \
+          #   --data '{"text":"Alert: Monitoring check failed"}' \
+          #   $SLACK_WEBHOOK_URL
+
+  dependency-updates-check:
+    name: Check for Dependency Updates
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Check for outdated packages
+        run: |
+          echo "Checking for outdated dependencies..."
+          npm outdated || true
+          
+          echo ""
+          echo "Run 'npm update' to update dependencies"
