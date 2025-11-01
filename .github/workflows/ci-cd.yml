@@ -11,6 +11,8 @@ jobs:
   quality-gate:
     name: Quality Gate
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
@@ -35,6 +37,8 @@ jobs:
   build:
     name: Build
     needs: quality-gate
+    permissions:
+      contents: read
     uses: ./.github/workflows/build-test.yml
 
   security:
@@ -49,12 +53,16 @@ jobs:
   code-quality:
     name: Code Quality
     needs: quality-gate
+    permissions:
+      contents: read
     uses: ./.github/workflows/code-quality.yml
 
   integration-complete:
     name: Integration Complete
     needs: [build, security, code-quality]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     if: github.event_name == 'pull_request'
     
     steps:
@@ -67,6 +75,8 @@ jobs:
     name: Deploy to Staging
     needs: [build, security, code-quality]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     environment:
       name: staging
@@ -85,6 +95,8 @@ jobs:
     name: Deploy to Production
     needs: [build, security, code-quality]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
       name: production

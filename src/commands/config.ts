@@ -75,6 +75,15 @@ function getNestedValue(obj: any, path: string): any {
 function setNestedValue(obj: any, path: string, value: any): void {
   const keys = path.split('.');
   const lastKey = keys.pop()!;
+  
+  // Prevent prototype pollution
+  if (keys.some(key => key === '__proto__' || key === 'constructor' || key === 'prototype')) {
+    throw new Error('Invalid configuration key: prototype pollution attempt detected');
+  }
+  if (lastKey === '__proto__' || lastKey === 'constructor' || lastKey === 'prototype') {
+    throw new Error('Invalid configuration key: prototype pollution attempt detected');
+  }
+  
   const target = keys.reduce((current, key) => {
     if (!current[key]) current[key] = {};
     return current[key];
