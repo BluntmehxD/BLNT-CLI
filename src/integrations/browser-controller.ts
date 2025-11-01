@@ -139,9 +139,26 @@ export class BrowserController {
     });
   }
 
+  /**
+   * Execute JavaScript in the browser context.
+   * 
+   * WARNING: This method executes arbitrary JavaScript code in the browser.
+   * Only use with trusted input. Never pass user-supplied code directly.
+   * 
+   * @param script JavaScript code to execute
+   * @returns Result of the script execution
+   */
   async executeScript(script: string): Promise<any> {
     if (!this.page) {
       throw new Error('Browser not initialized. Call launch() first.');
+    }
+
+    // Warning for security-conscious usage
+    if (process.env.BLNT_STRICT_MODE === 'true') {
+      console.warn(
+        'WARNING: Executing arbitrary JavaScript in browser context. ' +
+        'Ensure the script source is trusted.'
+      );
     }
 
     return await this.page.evaluate(script);

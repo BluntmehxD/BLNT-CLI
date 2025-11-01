@@ -83,17 +83,32 @@ export class ConfigManager {
   }
 
   set(key: string, value: any): void {
+    // Prevent prototype pollution
+    const dangerousKeys = ['__proto__', 'constructor', 'prototype'];
     const keys = key.split('.');
+    
+    // Check for dangerous keys
+    for (const k of keys) {
+      if (dangerousKeys.includes(k)) {
+        throw new Error(`Invalid configuration key: ${key}`);
+      }
+    }
+    
     let obj: any = this.config;
 
     for (let i = 0; i < keys.length - 1; i++) {
-      if (!obj[keys[i]]) {
+      // Use hasOwnProperty to avoid prototype chain
+      if (!Object.prototype.hasOwnProperty.call(obj, keys[i])) {
         obj[keys[i]] = {};
       }
       obj = obj[keys[i]];
     }
 
-    obj[keys[keys.length - 1]] = value;
+    // Use Object.defineProperty for safer assignment
+    const lastKey = keys[keys.length - 1];
+    if (!dangerousKeys.includes(lastKey)) {
+      obj[lastKey] = value;
+    }
   }
 
   async reset(): Promise<void> {

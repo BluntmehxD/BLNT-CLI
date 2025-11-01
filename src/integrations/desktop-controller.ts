@@ -158,13 +158,23 @@ export class DesktopController {
     
     try {
       let command = '';
+      // Escape text for safe shell usage - escape backslashes first to prevent double-escaping
+      const escapedText = text
+        .replace(/\\/g, '\\\\')  // Escape backslashes first
+        .replace(/"/g, '\\"')     // Escape double quotes
+        .replace(/`/g, '\\`')     // Escape backticks
+        .replace(/\$/g, '\\$');   // Escape dollar signs
       
       if (platform === 'darwin') {
-        command = `echo "${text}" | pbcopy`;
+        command = `echo "${escapedText}" | pbcopy`;
       } else if (platform === 'linux') {
-        command = `echo "${text}" | xclip -selection clipboard`;
+        command = `echo "${escapedText}" | xclip -selection clipboard`;
       } else if (platform === 'win32') {
-        command = `echo ${text} | clip`;
+        // For Windows, use PowerShell with proper escaping
+        const psEscaped = text
+          .replace(/\\/g, '\\\\')
+          .replace(/'/g, "''");
+        command = `powershell -command "Set-Clipboard -Value '${psEscaped}'"`; 
       }
       
       await this.executeCommand(command);
@@ -189,18 +199,21 @@ export class DesktopController {
     
     try {
       let command = '';
+      // Validate and sanitize filename to prevent command injection
+      const sanitizedFilename = filename.replace(/[;&|`$()<>'"\\]/g, '');
       
       if (platform === 'darwin') {
-        command = `screencapture ${filename}`;
+        command = `screencapture "${sanitizedFilename}"`;
       } else if (platform === 'linux') {
-        command = `import -window root ${filename}`;
+        command = `import -window root "${sanitizedFilename}"`;
       } else if (platform === 'win32') {
-        // Using PowerShell to capture screenshot on Windows
-        command = `powershell -command "Add-Type -AssemblyName System.Windows.Forms;[System.Windows.Forms.SendKeys]::SendWait('%{PRTSC}');Start-Sleep -Milliseconds 500;$img = [System.Windows.Forms.Clipboard]::GetImage();$img.Save('${filename}')"`;
+        // Using PowerShell to capture screenshot on Windows with escaped filename
+        const psFilename = sanitizedFilename.replace(/'/g, "''");
+        command = `powershell -command "Add-Type -AssemblyName System.Windows.Forms;[System.Windows.Forms.SendKeys]::SendWait('%{PRTSC}');Start-Sleep -Milliseconds 500;$img = [System.Windows.Forms.Clipboard]::GetImage();$img.Save('${psFilename}')"`;
       }
       
       await this.executeCommand(command);
-      spinner.succeed(chalk.green(`Screenshot saved to ${filename}`));
+      spinner.succeed(chalk.green(`Screenshot saved to ${sanitizedFilename}`));
     } catch (error) {
       spinner.fail(chalk.red('Failed to capture screenshot'));
       throw error;
