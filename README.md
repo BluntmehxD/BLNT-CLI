@@ -130,7 +130,15 @@ This project is built and maintained by a team of specialized DevOps agents:
 6. **Monitoring Agent** - Tracks health metrics and alerts on issues
 7. **Documentation Agent** - Maintains comprehensive documentation
 
-See [.github/agents/TEAM_COORDINATION.md](.github/agents/TEAM_COORDINATION.md) for details on how these agents work together.
+### DevOps Documentation
+
+- 📊 **[DevOps Overview (DEVOPS.md)](DEVOPS.md)** - Comprehensive guide to the DevOps team
+- 🚀 **[Quick Reference (DEVOPS_QUICK_REFERENCE.md)](DEVOPS_QUICK_REFERENCE.md)** - Common tasks and commands
+- 🔄 **[Workflow Diagram (DEVOPS_WORKFLOW.md)](DEVOPS_WORKFLOW.md)** - Visual workflow documentation
+- 🤝 **[Team Coordination](.github/agents/TEAM_COORDINATION.md)** - How agents work together
+- 📁 **[Agent Definitions](.github/agents/)** - Individual agent specifications
+
+All workflows are defined in [`.github/workflows/`](.github/workflows/) and agents are documented in [`.github/agents/`](.github/agents/).
 
 ## 🔧 Development
 
