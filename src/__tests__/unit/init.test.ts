@@ -34,13 +34,13 @@ describe('init command', () => {
 
   it('should create config file on first init', async () => {
     await initCommand({});
-    
+
     expect(fs.existsSync(configPath)).toBe(true);
   });
 
   it('should create valid JSON config', async () => {
     await initCommand({});
-    
+
     const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
     expect(config).toHaveProperty('version');
     expect(config).toHaveProperty('mode');
@@ -51,14 +51,14 @@ describe('init command', () => {
     // First init
     await initCommand({});
     const firstConfig = fs.readFileSync(configPath, 'utf-8');
-    
+
     // Wait a bit to ensure timestamp would be different
-    await new Promise(resolve => setTimeout(resolve, 10));
-    
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
     // Second init without force
     await initCommand({});
     const secondConfig = fs.readFileSync(configPath, 'utf-8');
-    
+
     // Config should be the same
     expect(firstConfig).toBe(secondConfig);
   });
@@ -67,14 +67,14 @@ describe('init command', () => {
     // First init
     await initCommand({});
     const firstConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-    
+
     // Wait a bit to ensure timestamp would be different
-    await new Promise(resolve => setTimeout(resolve, 10));
-    
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
     // Second init with force
     await initCommand({ force: true });
     const secondConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-    
+
     // Timestamps should be different
     expect(firstConfig.createdAt).not.toBe(secondConfig.createdAt);
   });

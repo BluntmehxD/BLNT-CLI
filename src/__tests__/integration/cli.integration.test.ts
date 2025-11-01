@@ -1,6 +1,6 @@
 /**
  * Integration test suite
- * 
+ *
  * Tests the integration between different components
  */
 

@@ -3,7 +3,7 @@ import ora from 'ora';
 
 /**
  * Agent Controller
- * 
+ *
  * Central controller for managing AI agents in BLNT-CLI
  */
 export class AgentController {
@@ -46,11 +46,11 @@ export class AgentController {
    */
   async startAgent(name: string) {
     const spinner = ora(`Starting ${name}...`).start();
-    
+
     try {
       // Simulate agent startup
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       spinner.succeed(chalk.green(`${name} started successfully`));
       return true;
     } catch (error) {
@@ -64,11 +64,11 @@ export class AgentController {
    */
   async stopAgent(name: string) {
     const spinner = ora(`Stopping ${name}...`).start();
-    
+
     try {
       // Simulate agent shutdown
       await new Promise((resolve) => setTimeout(resolve, 500));
-      
+
       spinner.succeed(chalk.green(`${name} stopped successfully`));
       return true;
     } catch (error) {

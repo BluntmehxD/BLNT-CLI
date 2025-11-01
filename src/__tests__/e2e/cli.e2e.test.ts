@@ -1,6 +1,6 @@
 /**
  * End-to-end test suite
- * 
+ *
  * Tests the complete CLI workflow
  */
 

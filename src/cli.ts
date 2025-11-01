@@ -49,11 +49,11 @@ program
   .option('--stop <agent>', 'Stop specific agent')
   .action(async (options) => {
     const controller = new AgentController();
-    
+
     if (options.list) {
       console.log(chalk.blue('Available agents:'));
       const agents = await controller.listAgents();
-      agents.forEach(agent => {
+      agents.forEach((agent) => {
         console.log(chalk.green(`  - ${agent.name}: ${agent.description}`));
       });
     }

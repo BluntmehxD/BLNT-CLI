@@ -10,7 +10,7 @@ describe('AgentController', () => {
   describe('listAgents', () => {
     it('should return list of available agents', async () => {
       const agents = await controller.listAgents();
-      
+
       expect(agents).toBeDefined();
       expect(Array.isArray(agents)).toBe(true);
       expect(agents.length).toBeGreaterThan(0);
@@ -18,8 +18,8 @@ describe('AgentController', () => {
 
     it('should return agents with required properties', async () => {
       const agents = await controller.listAgents();
-      
-      agents.forEach(agent => {
+
+      agents.forEach((agent) => {
         expect(agent).toHaveProperty('name');
         expect(agent).toHaveProperty('description');
         expect(agent).toHaveProperty('status');

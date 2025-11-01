@@ -31,7 +31,7 @@ export async function configCommand(options: any) {
 
       const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
       const value = getNestedValue(config, options.get);
-      
+
       if (value !== undefined) {
         console.log(chalk.green(`${options.get}: ${JSON.stringify(value)}`));
       } else {
@@ -49,10 +49,10 @@ export async function configCommand(options: any) {
 
       const [key, value] = options.set.split('=');
       const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-      
+
       setNestedValue(config, key, parseValue(value));
       fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
-      
+
       console.log(chalk.green(`Configuration updated: ${key} = ${value}`));
       return;
     }
