@@ -39,24 +39,20 @@ export const agentCommand = new Command('agent')
       })
   )
   .addCommand(
-    new Command('status')
-      .description('Check agent status')
-      .action(() => {
-        console.log(chalk.cyan('\n📊 Agent Status\n'));
-        console.log(chalk.white('Status: Idle'));
-        console.log(chalk.white('Active tasks: 0'));
-        console.log(chalk.gray('\nImplementation pending\n'));
-      })
+    new Command('status').description('Check agent status').action(() => {
+      console.log(chalk.cyan('\n📊 Agent Status\n'));
+      console.log(chalk.white('Status: Idle'));
+      console.log(chalk.white('Active tasks: 0'));
+      console.log(chalk.gray('\nImplementation pending\n'));
+    })
   )
   .addCommand(
-    new Command('stop')
-      .description('Stop running agent')
-      .action(() => {
-        const spinner = ora('Stopping agent...').start();
-        setTimeout(() => {
-          spinner.succeed(chalk.green('Agent stopped - Implementation pending'));
-        }, 500);
-      })
+    new Command('stop').description('Stop running agent').action(() => {
+      const spinner = ora('Stopping agent...').start();
+      setTimeout(() => {
+        spinner.succeed(chalk.green('Agent stopped - Implementation pending'));
+      }, 500);
+    })
   )
   .addCommand(
     new Command('history')

@@ -3,8 +3,7 @@ import chalk from 'chalk';
 import { desktopCommand } from './commands/desktop';
 import { browserCommand } from './commands/browser';
 import { agentCommand } from './commands/agent';
-
-const packageJson = require('../package.json');
+import packageJson from '../package.json';
 
 export function cli() {
   const program = new Command();
