@@ -1,0 +1,91 @@
+{
+  "name": "blnt-cli",
+  "version": "1.0.0",
+  "description": "AI agent that brings the power of BLNT-OS directly into your terminal with full desktop control and browser control with Autonomous Agentic Capabilities",
+  "main": "./bin/run.js",
+  "bin": {
+    "blnt": "./bin/run.js"
+  },
+  "type": "module",
+  "files": [
+    "/bin",
+    "/dist",
+    "/oclif.manifest.json"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf dist oclif.manifest.json build sea-prep.blob",
+    "lint": "eslint . --ext .ts",
+    "postpack": "rm -f oclif.manifest.json",
+    "prepack": "npm run build && oclif manifest && oclif readme",
+    "test": "echo \"No tests yet\" && exit 0",
+    "dev": "node --loader ts-node/esm ./bin/dev.js",
+    "package": "./scripts/build-executables.sh"
+  },
+  "keywords": [
+    "ai",
+    "cli",
+    "ollama",
+    "chatbot",
+    "terminal",
+    "blnt"
+  ],
+  "author": "BLNT",
+  "license": "MIT",
+  "dependencies": {
+    "@oclif/core": "^3.26.0",
+    "@oclif/plugin-help": "^6.0.21",
+    "@oclif/plugin-plugins": "^5.0.11",
+    "axios": "^1.6.7",
+    "chalk": "^5.3.0",
+    "conf": "^12.0.0",
+    "ink": "^4.4.1",
+    "ink-text-input": "^5.0.1",
+    "ink-spinner": "^5.0.0",
+    "ollama": "^0.5.0",
+    "openai": "^4.28.0",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "@types/react": "^18.2.60",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
+    "eslint": "^8.57.0",
+    "oclif": "^4.5.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "oclif": {
+    "bin": "blnt",
+    "dirname": "blnt",
+    "commands": "./dist/commands",
+    "plugins": [
+      "@oclif/plugin-help",
+      "@oclif/plugin-plugins"
+    ],
+    "topicSeparator": " ",
+    "topics": {
+      "config": {
+        "description": "Manage BLNT-CLI configuration"
+      }
+    }
+  },
+  "pkg": {
+    "scripts": "dist/**/*.js",
+    "targets": [
+      "node18-linux-x64",
+      "node18-macos-x64",
+      "node18-win-x64"
+    ],
+    "outputPath": "build",
+    "assets": [
+      "node_modules/@oclif/**/*",
+      "node_modules/ink/**/*",
+      "node_modules/react/**/*"
+    ]
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
