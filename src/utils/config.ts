@@ -42,7 +42,12 @@ class ConfigManager {
   }
 
   getAll(): BLNTConfig {
-    return this.config.store;
+    const allConfig = this.config.store;
+    // Sync cache with current config
+    for (const key of Object.keys(allConfig) as Array<keyof BLNTConfig>) {
+      this.cache.set(key, allConfig[key]);
+    }
+    return allConfig;
   }
 
   clear(): void {

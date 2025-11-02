@@ -1,5 +1,7 @@
 import { Ollama } from 'ollama';
 import axios, { AxiosInstance } from 'axios';
+import { Agent as HttpAgent } from 'http';
+import { Agent as HttpsAgent } from 'https';
 import { configManager } from './config.js';
 
 export class OllamaClient {
@@ -15,8 +17,16 @@ export class OllamaClient {
     this.axiosInstance = axios.create({
       timeout: 2000,
       maxRedirects: 0,
-      httpAgent: { keepAlive: true },
-      httpsAgent: { keepAlive: true },
+      httpAgent: new HttpAgent({ 
+        keepAlive: true,
+        maxSockets: 5,
+        keepAliveMsecs: 30000,
+      }),
+      httpsAgent: new HttpsAgent({ 
+        keepAlive: true,
+        maxSockets: 5,
+        keepAliveMsecs: 30000,
+      }),
     });
   }
 

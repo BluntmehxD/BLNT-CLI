@@ -3,14 +3,13 @@ import { APIClient } from './api-client.js';
 
 export class AIProvider {
   private static instance: AIProvider | null = null;
-  private ollamaClient: OllamaClient;
-  private apiClient: APIClient;
+  private ollamaClient: OllamaClient | null = null;
+  private apiClient: APIClient | null = null;
   private useOllama: boolean = false;
   private initialized: boolean = false;
 
   private constructor() {
-    this.ollamaClient = new OllamaClient();
-    this.apiClient = new APIClient();
+    // Clients are now lazily initialized
   }
 
   static getInstance(): AIProvider {
@@ -26,10 +25,20 @@ export class AIProvider {
       return;
     }
 
+    // Lazy initialize OllamaClient
+    if (!this.ollamaClient) {
+      this.ollamaClient = new OllamaClient();
+    }
+
     // Try Ollama first (local-first approach)
     this.useOllama = await this.ollamaClient.initialize();
     
     if (!this.useOllama) {
+      // Lazy initialize APIClient only if needed
+      if (!this.apiClient) {
+        this.apiClient = new APIClient();
+      }
+      
       // Fallback to API if Ollama is not available
       const apiInitialized = await this.apiClient.initializeOpenAI();
       if (!apiInitialized) {
@@ -44,18 +53,22 @@ export class AIProvider {
   }
 
   async chat(message: string, model?: string): Promise<string> {
-    if (this.useOllama) {
+    if (this.useOllama && this.ollamaClient) {
       return this.ollamaClient.chat(message, model);
-    } else {
+    } else if (this.apiClient) {
       return this.apiClient.chatWithOpenAI(message, model);
+    } else {
+      throw new Error('No AI provider available. Please initialize first.');
     }
   }
 
   async generate(prompt: string, model?: string): Promise<string> {
-    if (this.useOllama) {
+    if (this.useOllama && this.ollamaClient) {
       return this.ollamaClient.generate(prompt, model);
-    } else {
+    } else if (this.apiClient) {
       return this.apiClient.chatWithOpenAI(prompt, model);
+    } else {
+      throw new Error('No AI provider available. Please initialize first.');
     }
   }
 

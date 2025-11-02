@@ -14,7 +14,7 @@ interface Message {
 }
 
 // Memoized message component for better performance
-const ChatMessage = React.memo<{ msg: Message; index: number }>(({ msg }) => (
+const ChatMessage = React.memo<{ msg: Message }>(({ msg }) => (
   <Box marginBottom={1}>
     <Box marginRight={1}>
       <Text color={msg.role === 'user' ? 'magenta' : 'cyan'} bold>
@@ -73,7 +73,7 @@ export const ChatUI: React.FC<ChatUIProps> = ({ onMessage, provider }) => {
 
       <Box flexDirection="column" marginBottom={1}>
         {displayedMessages.map((msg, idx) => (
-          <ChatMessage key={`${idx}-${msg.content.substring(0, 20)}`} msg={msg} index={idx} />
+          <ChatMessage key={`msg-${idx}`} msg={msg} />
         ))}
       </Box>
 
