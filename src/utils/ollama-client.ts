@@ -1,21 +1,53 @@
 import { Ollama } from 'ollama';
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
+import { Agent as HttpAgent } from 'http';
+import { Agent as HttpsAgent } from 'https';
 import { configManager } from './config.js';
 
 export class OllamaClient {
   private client: Ollama | null = null;
   private baseUrl: string;
+  private axiosInstance: AxiosInstance;
+  private availabilityCache: { result: boolean; timestamp: number } | null = null;
+  private readonly CACHE_TTL = 30000; // 30 seconds cache
 
   constructor(baseUrl?: string) {
     this.baseUrl = baseUrl || configManager.get('ollamaUrl') || 'http://localhost:11434';
+    // Create axios instance with connection pooling
+    this.axiosInstance = axios.create({
+      timeout: 2000,
+      maxRedirects: 0,
+      httpAgent: new HttpAgent({ 
+        keepAlive: true,
+        maxSockets: 5,
+        keepAliveMsecs: 30000,
+      }),
+      httpsAgent: new HttpsAgent({ 
+        keepAlive: true,
+        maxSockets: 5,
+        keepAliveMsecs: 30000,
+      }),
+    });
   }
 
   async isAvailable(): Promise<boolean> {
+    // Check cache first
+    if (this.availabilityCache) {
+      const now = Date.now();
+      if (now - this.availabilityCache.timestamp < this.CACHE_TTL) {
+        return this.availabilityCache.result;
+      }
+    }
+
     try {
-      const response = await axios.get(`${this.baseUrl}/api/tags`, { timeout: 2000 });
-      return response.status === 200;
+      const response = await this.axiosInstance.get(`${this.baseUrl}/api/tags`);
+      const result = response.status === 200;
+      this.availabilityCache = { result, timestamp: Date.now() };
+      return result;
     } catch {
-      return false;
+      const result = false;
+      this.availabilityCache = { result, timestamp: Date.now() };
+      return result;
     }
   }
 

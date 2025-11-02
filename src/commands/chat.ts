@@ -23,7 +23,7 @@ export default class Chat extends Command {
 
     printLogo();
 
-    const provider = new AIProvider();
+    const provider = AIProvider.getInstance();
     await provider.initialize();
 
     const handleMessage = async (message: string): Promise<string> => {

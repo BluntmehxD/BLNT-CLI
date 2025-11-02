@@ -1,7 +1,7 @@
 import { Args, Command, Flags } from '@oclif/core';
 import { AIProvider } from '../utils/ai-provider.js';
 import { printLogo, theme, formatError, formatSuccess } from '../utils/theme.js';
-import * as fs from 'fs';
+import { promises as fs } from 'fs';
 import * as path from 'path';
 
 export default class Context extends Command {
@@ -38,15 +38,17 @@ export default class Context extends Command {
     const contextFile = path.resolve(process.cwd(), flags.file);
     
     let contextContent = '';
-    if (fs.existsSync(contextFile)) {
+    try {
+      // Use async file operations
+      await fs.access(contextFile);
       this.log(theme.primary(`📄 Loading context from: ${flags.file}`));
-      contextContent = fs.readFileSync(contextFile, 'utf-8');
-    } else {
+      contextContent = await fs.readFile(contextFile, 'utf-8');
+    } catch {
       this.log(theme.warning(`⚠️  Context file not found: ${flags.file}`));
       this.log(theme.dim('Proceeding without context...\n'));
     }
 
-    const provider = new AIProvider();
+    const provider = AIProvider.getInstance();
     
     try {
       this.log(theme.primary('🔄 Initializing AI provider...'));

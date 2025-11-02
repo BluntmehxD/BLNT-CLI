@@ -24,7 +24,7 @@ export default class Query extends Command {
 
     printLogo();
     
-    const provider = new AIProvider();
+    const provider = AIProvider.getInstance();
     
     try {
       this.log(theme.primary('🔄 Initializing AI provider...'));

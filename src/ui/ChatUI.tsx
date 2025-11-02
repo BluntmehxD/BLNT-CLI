@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Box, Text, useInput, useApp } from 'ink';
 import TextInput from 'ink-text-input';
 import Spinner from 'ink-spinner';
@@ -8,9 +8,30 @@ interface ChatUIProps {
   provider: string;
 }
 
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+// Memoized message component for better performance
+const ChatMessage = React.memo<{ msg: Message }>(({ msg }) => (
+  <Box marginBottom={1}>
+    <Box marginRight={1}>
+      <Text color={msg.role === 'user' ? 'magenta' : 'cyan'} bold>
+        {msg.role === 'user' ? '➤ You:' : '🤖 BLNT:'}
+      </Text>
+    </Box>
+    <Box flexDirection="column">
+      <Text>{msg.content}</Text>
+    </Box>
+  </Box>
+));
+
+ChatMessage.displayName = 'ChatMessage';
+
 export const ChatUI: React.FC<ChatUIProps> = ({ onMessage, provider }) => {
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { exit } = useApp();
 
@@ -39,6 +60,9 @@ export const ChatUI: React.FC<ChatUIProps> = ({ onMessage, provider }) => {
     }
   };
 
+  // Only show last 10 messages, memoized for performance
+  const displayedMessages = useMemo(() => messages.slice(-10), [messages]);
+
   return (
     <Box flexDirection="column" padding={1}>
       <Box borderStyle="round" borderColor="cyan" padding={1} marginBottom={1}>
@@ -48,17 +72,8 @@ export const ChatUI: React.FC<ChatUIProps> = ({ onMessage, provider }) => {
       </Box>
 
       <Box flexDirection="column" marginBottom={1}>
-        {messages.slice(-10).map((msg, idx) => (
-          <Box key={idx} marginBottom={1}>
-            <Box marginRight={1}>
-              <Text color={msg.role === 'user' ? 'magenta' : 'cyan'} bold>
-                {msg.role === 'user' ? '➤ You:' : '🤖 BLNT:'}
-              </Text>
-            </Box>
-            <Box flexDirection="column">
-              <Text>{msg.content}</Text>
-            </Box>
-          </Box>
+        {displayedMessages.map((msg, idx) => (
+          <ChatMessage key={`msg-${idx}`} msg={msg} />
         ))}
       </Box>
 
