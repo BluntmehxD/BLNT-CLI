@@ -9,6 +9,7 @@ export interface BLNTConfig {
 
 class ConfigManager {
   private config: Conf<BLNTConfig>;
+  private cache: Map<keyof BLNTConfig, string | undefined>;
 
   constructor() {
     this.config = new Conf<BLNTConfig>({
@@ -19,14 +20,25 @@ class ConfigManager {
         ollamaUrl: 'http://localhost:11434',
       },
     });
+    this.cache = new Map();
   }
 
   get(key: keyof BLNTConfig): string | undefined {
-    return this.config.get(key);
+    // Check cache first
+    if (this.cache.has(key)) {
+      return this.cache.get(key);
+    }
+    
+    // Fetch and cache
+    const value = this.config.get(key);
+    this.cache.set(key, value);
+    return value;
   }
 
   set(key: keyof BLNTConfig, value: string): void {
     this.config.set(key, value);
+    // Update cache
+    this.cache.set(key, value);
   }
 
   getAll(): BLNTConfig {
@@ -35,6 +47,16 @@ class ConfigManager {
 
   clear(): void {
     this.config.clear();
+    this.cache.clear();
+  }
+
+  // Clear cache for specific key
+  invalidateCache(key?: keyof BLNTConfig): void {
+    if (key) {
+      this.cache.delete(key);
+    } else {
+      this.cache.clear();
+    }
   }
 }
 

@@ -2,16 +2,30 @@ import { OllamaClient } from './ollama-client.js';
 import { APIClient } from './api-client.js';
 
 export class AIProvider {
+  private static instance: AIProvider | null = null;
   private ollamaClient: OllamaClient;
   private apiClient: APIClient;
   private useOllama: boolean = false;
+  private initialized: boolean = false;
 
-  constructor() {
+  private constructor() {
     this.ollamaClient = new OllamaClient();
     this.apiClient = new APIClient();
   }
 
+  static getInstance(): AIProvider {
+    if (!AIProvider.instance) {
+      AIProvider.instance = new AIProvider();
+    }
+    return AIProvider.instance;
+  }
+
   async initialize(): Promise<void> {
+    // Skip if already initialized
+    if (this.initialized) {
+      return;
+    }
+
     // Try Ollama first (local-first approach)
     this.useOllama = await this.ollamaClient.initialize();
     
@@ -25,6 +39,8 @@ export class AIProvider {
         console.warn('  2. Set an API key: blnt config set apiKey YOUR_API_KEY');
       }
     }
+
+    this.initialized = true;
   }
 
   async chat(message: string, model?: string): Promise<string> {
